@@ -1,0 +1,40 @@
+name: ML 
+on:
+ push:
+  branches: [main]
+jobs:
+ check:
+  runs-on: ubuntu-latest
+  steps:
+    - name: checkout code
+      uses: actions/checkout@v4
+    - name: setup python
+      uses: actions/setup-python@v5
+      with:
+       python-version: "3.10"
+      run: install flake8
+    - name: code quality 
+      run: flake8
+ train:
+  needs: check
+  if: needs.train.result == 'success' && contains(github.event.head_commit.message , '[runs-on]')
+  runs-on: ubuntu-latest 
+  steps:
+    - name: checkout code
+      uses: actions/checkout@v4
+    - name: setup python
+      uses: actions/setup-python@v5
+      with:
+       python-version: "3.10"
+    - name: save logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+       name: training_logs
+       path: train.log
+    - name: evaluation
+      if: success()
+      run: python evalautae.py
+    - name: clean
+      if: always()
+      run: echo " run successfully "
