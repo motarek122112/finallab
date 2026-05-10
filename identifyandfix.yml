@@ -4,7 +4,7 @@ kind: Deployment
 metadata: 
  name: personacanvas-frontend
  labels: 
-  app: web ui
+  app: web ui # to match deployment and selector pod label
 spec: 
  replicas: 3 # change replica to 3 this ensure if pod failed it will automatically replaced
  selector: 
