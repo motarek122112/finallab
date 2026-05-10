@@ -1,0 +1,36 @@
+apiVersion: apps/v1 #missing api version
+kind: Deployment 
+
+metadata: 
+ name: personacanvas-frontend
+ labels: 
+  app: web ui
+spec: 
+ replicas: 3 # change replica to 3 this ensure if pod failed it will automatically replaced
+ selector: 
+  matchlabels: 
+   app: web-ui
+template:
+ metadata:
+  labels: 
+   app: web-ui
+spec:
+ containers:
+  - name: streamlit-app
+    image: almond/streamlit-k8s-demo
+    ports:
+     containerPort: 8080 
+
+apiVersion: v1
+kind: service 
+metadata:
+ name: frontend-service
+spec: 
+ type: nodeport # to  expose the app
+ selector:
+  app: webui
+ ports:
+  - protocol: TCP # change protocol from udp to tcp
+    port:80
+    targetport: 8501 # CHANGE CONTAINER PORT FROM 80 TP 8501
+    nodeport: 30050 #error because node port must be between range 30000-32767
